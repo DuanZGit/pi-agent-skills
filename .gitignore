@@ -1,0 +1,37 @@
+# 忽略所有隐藏文件（除了.pi目录和.gitignore）
+.*
+!.pi/
+!.gitignore
+
+# 忽略敏感文件
+*.tar.gz
+*.backup
+*.json
+
+# 忽略临时文件
+*.fifo
+*.service
+*.conf
+
+# 忽略其他目录
+ai/
+albion_wiki/
+backup/
+bin/
+cfst/
+claude_code_settings/
+config/
+docs/
+go/
+md/
+moltbot/
+open-webSearch/
+project/
+selikes/
+src/
+storage/
+termux-style/
+test/
+tools/
+workflow/
+test_hook.sh
