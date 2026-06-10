@@ -1,9 +1,4 @@
--- 营养与化学反应知识库 v2（现代营养学+食品化学）
-
--- ============================================================
--- 1. 食材营养成分表（每100g）
--- ============================================================
-CREATE TABLE IF NOT EXISTS ingredient_nutrition (
+CREATE TABLE ingredient_nutrition (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,              -- 食材名称
     category TEXT,                   -- 分类：肉类/蔬菜/水果/谷物/豆制品/水产/蛋奶
@@ -72,12 +67,9 @@ CREATE TABLE IF NOT EXISTS ingredient_nutrition (
     shelf_life TEXT,                 -- 保质期
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- ============================================================
--- 2. 调料成分表
--- ============================================================
-CREATE TABLE IF NOT EXISTS condiment_info (
+, source_id INTEGER, source_platform TEXT, source_title TEXT, source_url TEXT, source_method TEXT);
+CREATE TABLE sqlite_sequence(name,seq);
+CREATE TABLE condiment_info (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,              -- 调料名称
     
@@ -107,12 +99,8 @@ CREATE TABLE IF NOT EXISTS condiment_info (
     daily_limit TEXT,                -- 每日限量
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- ============================================================
--- 3. 食品化学反应表
--- ============================================================
-CREATE TABLE IF NOT EXISTS chemical_reactions (
+, source_id INTEGER, source_platform TEXT, source_title TEXT, source_url TEXT, source_method TEXT);
+CREATE TABLE chemical_reactions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,              -- 反应名称
     name_en TEXT,                    -- 英文名
@@ -152,12 +140,8 @@ CREATE TABLE IF NOT EXISTS chemical_reactions (
     examples TEXT,                   -- 实例
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- ============================================================
--- 4. 营养相互作用表
--- ============================================================
-CREATE TABLE IF NOT EXISTS nutrient_interactions (
+, source_id INTEGER, source_platform TEXT, source_title TEXT, source_url TEXT, source_method TEXT);
+CREATE TABLE nutrient_interactions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nutrient1 TEXT NOT NULL,         -- 营养素1
     nutrient2 TEXT NOT NULL,         -- 营养素2
@@ -181,12 +165,8 @@ CREATE TABLE IF NOT EXISTS nutrient_interactions (
     ref_source TEXT                  -- 参考来源
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- ============================================================
--- 5. 烹饪对营养的影响表
--- ============================================================
-CREATE TABLE IF NOT EXISTS cooking_nutrition_impact (
+, source_id INTEGER, source_platform TEXT, source_title TEXT, source_url TEXT, source_method TEXT);
+CREATE TABLE cooking_nutrition_impact (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     cooking_method TEXT NOT NULL,    -- 烹饪方式
     
@@ -221,12 +201,8 @@ CREATE TABLE IF NOT EXISTS cooking_nutrition_impact (
     tips TEXT,                       -- 建议
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- ============================================================
--- 6. 食材搭配效应表
--- ============================================================
-CREATE TABLE IF NOT EXISTS food_synergy (
+, source_id INTEGER, source_platform TEXT, source_title TEXT, source_url TEXT, source_method TEXT);
+CREATE TABLE food_synergy (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     food1 TEXT NOT NULL,
     food2 TEXT NOT NULL,
@@ -254,16 +230,23 @@ CREATE TABLE IF NOT EXISTS food_synergy (
     recommendation TEXT,
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+, source_id INTEGER, source_platform TEXT, source_title TEXT, source_url TEXT, source_method TEXT);
+CREATE INDEX idx_nutrition_name ON ingredient_nutrition(name);
+CREATE INDEX idx_nutrition_category ON ingredient_nutrition(category);
+CREATE INDEX idx_condiment_name ON condiment_info(name);
+CREATE INDEX idx_reaction_name ON chemical_reactions(name);
+CREATE INDEX idx_reaction_category ON chemical_reactions(category);
+CREATE INDEX idx_interaction_nutrient1 ON nutrient_interactions(nutrient1);
+CREATE INDEX idx_interaction_nutrient2 ON nutrient_interactions(nutrient2);
+CREATE INDEX idx_impact_method ON cooking_nutrition_impact(cooking_method);
+CREATE INDEX idx_synergy_food1 ON food_synergy(food1);
+CREATE INDEX idx_synergy_food2 ON food_synergy(food2);
+CREATE TABLE source_registry (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  platform TEXT NOT NULL,
+  title TEXT,
+  url TEXT NOT NULL,
+  method TEXT,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
--- 创建索引
-CREATE INDEX IF NOT EXISTS idx_nutrition_name ON ingredient_nutrition(name);
-CREATE INDEX IF NOT EXISTS idx_nutrition_category ON ingredient_nutrition(category);
-CREATE INDEX IF NOT EXISTS idx_condiment_name ON condiment_info(name);
-CREATE INDEX IF NOT EXISTS idx_reaction_name ON chemical_reactions(name);
-CREATE INDEX IF NOT EXISTS idx_reaction_category ON chemical_reactions(category);
-CREATE INDEX IF NOT EXISTS idx_interaction_nutrient1 ON nutrient_interactions(nutrient1);
-CREATE INDEX IF NOT EXISTS idx_interaction_nutrient2 ON nutrient_interactions(nutrient2);
-CREATE INDEX IF NOT EXISTS idx_impact_method ON cooking_nutrition_impact(cooking_method);
-CREATE INDEX IF NOT EXISTS idx_synergy_food1 ON food_synergy(food1);
-CREATE INDEX IF NOT EXISTS idx_synergy_food2 ON food_synergy(food2);

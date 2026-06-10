@@ -20,10 +20,10 @@ init_db() {
 query_methods() {
   if [ -z "$KEYWORD" ]; then
     echo "【所有烹饪方式】"
-    sqlite3 -header -column "$DB_PATH" "SELECT name, temperature, pros, health_note FROM cooking_methods;"
+    sqlite3 -header -column "$DB_PATH" "SELECT name, temperature, pros, health_note, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM cooking_methods;"
   else
     echo "【查询: $KEYWORD】"
-    sqlite3 -header -column "$DB_PATH" "SELECT name, principle, temperature, pros, cons, suitable_for, tips, health_note FROM cooking_methods WHERE name LIKE '%$KEYWORD%';"
+    sqlite3 -header -column "$DB_PATH" "SELECT name, principle, temperature, pros, cons, suitable_for, tips, health_note, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM cooking_methods WHERE name LIKE '%$KEYWORD%';" 2>/dev/null
   fi
 }
 
@@ -31,10 +31,10 @@ query_methods() {
 query_cookware() {
   if [ -z "$KEYWORD" ]; then
     echo "【所有厨具】"
-    sqlite3 -header -column "$DB_PATH" "SELECT name, material, pros, cons FROM cookware;"
+    sqlite3 -header -column "$DB_PATH" "SELECT name, material, pros, cons, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM cookware;"
   else
     echo "【查询: $KEYWORD】"
-    sqlite3 -header -column "$DB_PATH" "SELECT name, material, pros, cons, suitable_for, maintenance, safety_note FROM cookware WHERE name LIKE '%$KEYWORD%';"
+    sqlite3 -header -column "$DB_PATH" "SELECT name, material, pros, cons, suitable_for, maintenance, safety_note, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM cookware WHERE name LIKE '%$KEYWORD%';" 2>/dev/null
   fi
 }
 
@@ -45,7 +45,7 @@ query_ingredient() {
     sqlite3 -header -column "$DB_PATH" "SELECT DISTINCT category FROM ingredient_prep;"
   else
     echo "【查询: $KEYWORD】"
-    sqlite3 -header -column "$DB_PATH" "SELECT name, cleaning, cutting, marinating, blanching, storage, tips FROM ingredient_prep WHERE name LIKE '%$KEYWORD%' OR category LIKE '%$KEYWORD%';"
+    sqlite3 -header -column "$DB_PATH" "SELECT name, cleaning, cutting, marinating, blanching, storage, tips, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM ingredient_prep WHERE name LIKE '%$KEYWORD%' OR category LIKE '%$KEYWORD%';" 2>/dev/null
   fi
 }
 
@@ -53,10 +53,10 @@ query_ingredient() {
 query_seasoning() {
   if [ -z "$KEYWORD" ]; then
     echo "【所有调味料】"
-    sqlite3 -header -column "$DB_PATH" "SELECT name, flavor, function_text, timing FROM seasoning_science;"
+    sqlite3 -header -column "$DB_PATH" "SELECT name, flavor, function_text, timing, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM seasoning_science;"
   else
     echo "【查询: $KEYWORD】"
-    sqlite3 -header -column "$DB_PATH" "SELECT name, flavor, function_text, timing, substitutes, health_note FROM seasoning_science WHERE name LIKE '%$KEYWORD%';"
+    sqlite3 -header -column "$DB_PATH" "SELECT name, flavor, function_text, timing, substitutes, health_note, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM seasoning_science WHERE name LIKE '%$KEYWORD%';" 2>/dev/null
   fi
 }
 
@@ -64,10 +64,10 @@ query_seasoning() {
 query_baking() {
   if [ -z "$KEYWORD" ]; then
     echo "【所有烘焙知识】"
-    sqlite3 -header -column "$DB_PATH" "SELECT category, topic, content, temperature, duration FROM baking_knowledge;"
+    sqlite3 -header -column "$DB_PATH" "SELECT category, topic, content, temperature, duration, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM baking_knowledge;"
   else
     echo "【查询: $KEYWORD】"
-    sqlite3 -header -column "$DB_PATH" "SELECT category, topic, content, temperature, duration, tips FROM baking_knowledge WHERE topic LIKE '%$KEYWORD%' OR content LIKE '%$KEYWORD%';"
+    sqlite3 -header -column "$DB_PATH" "SELECT category, topic, content, temperature, duration, tips, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM baking_knowledge WHERE topic LIKE '%$KEYWORD%' OR content LIKE '%$KEYWORD%';" 2>/dev/null
   fi
 }
 
@@ -75,10 +75,10 @@ query_baking() {
 query_healthy() {
   if [ -z "$KEYWORD" ]; then
     echo "【所有健康烹饪要点】"
-    sqlite3 -header -column "$DB_PATH" "SELECT category, topic, recommendation FROM healthy_cooking;"
+    sqlite3 -header -column "$DB_PATH" "SELECT category, topic, recommendation, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM healthy_cooking;"
   else
     echo "【查询: $KEYWORD】"
-    sqlite3 -header -column "$DB_PATH" "SELECT category, topic, principle, recommendation, tips, special_population FROM healthy_cooking WHERE topic LIKE '%$KEYWORD%' OR category LIKE '%$KEYWORD%';"
+    sqlite3 -header -column "$DB_PATH" "SELECT category, topic, principle, recommendation, tips, special_population, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM healthy_cooking WHERE topic LIKE '%$KEYWORD%' OR category LIKE '%$KEYWORD%';" 2>/dev/null
   fi
 }
 
@@ -86,10 +86,10 @@ query_healthy() {
 query_faq() {
   if [ -z "$KEYWORD" ]; then
     echo "【所有常见问题】"
-    sqlite3 -header -column "$DB_PATH" "SELECT category, question FROM cooking_faq;"
+    sqlite3 -header -column "$DB_PATH" "SELECT category, question, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM cooking_faq;"
   else
     echo "【查询: $KEYWORD】"
-    sqlite3 -header -column "$DB_PATH" "SELECT question, answer, source FROM cooking_faq WHERE question LIKE '%$KEYWORD%' OR answer LIKE '%$KEYWORD%';"
+    sqlite3 -header -column "$DB_PATH" "SELECT question, answer, source, COALESCE(source_platform,'') as 来源平台, COALESCE(source_url,'') as 来源网址 FROM cooking_faq WHERE question LIKE '%$KEYWORD%' OR answer LIKE '%$KEYWORD%';" 2>/dev/null
   fi
 }
 

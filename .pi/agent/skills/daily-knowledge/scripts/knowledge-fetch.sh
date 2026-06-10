@@ -1,6 +1,6 @@
 #!/bin/bash
 # 日常知识查询工具 — 按优先级依次查询
-# 优先级: wikiHow → 本地已有资料 → 已固化的权威源 → 其他
+# 优先级: 本地已有资料 → 权威信息源 → 已固化的权威源 → wikiHow → 其他
 # 用法:
 #   ./knowledge-fetch.sh <关键词>              # 按优先级自动查
 #   ./knowledge-fetch.sh <关键词> <来源名>     # 只查指定来源
@@ -50,9 +50,9 @@ TEMPLATE
 }
 init_success_sources
 
-# ---------- 1. wikiHow (最高优先级) ----------
+# ---------- 4. wikiHow (步骤参考) ----------
 fetch_wikihow() {
-  echo -e "${BOLD}[1/优先级] wikiHow 生活指南${NC}"
+  echo -e "${BOLD}[4/优先级] wikiHow 生活指南${NC}"
   echo "---"
   
   local slug=$(echo "$KEYWORD" | sed 's/ /-/g')

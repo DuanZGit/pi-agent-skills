@@ -4,6 +4,9 @@
 #
 # 提取方法: curl-bs4 | curl-grep | playwright | jina
 #
+# 固化前建议先登记来源:
+#   ./source-register.sh <db_path> <platform> <title> <url> [method] [precision] [notes]
+#
 # 固化后:
 # - config/success/<源名>.sh → 爬取脚本
 # - raw/<领域>/日期-<源名>.md → 原始资料
@@ -116,6 +119,9 @@ if [ -n "$RAW_PATH" ] && [ -f "$RAW_PATH" ]; then
   cp "$RAW_PATH" "$RAW_DIR/$local_dir/${DATE}-${KEY_NAME}.md"
   echo "✓ 原始资料已保存: raw/$local_dir/${DATE}-${KEY_NAME}.md"
 fi
+
+echo ""
+echo "提示: 如需让数据库可追溯，先运行 scripts/source-register.sh 登记来源，再把条目写入库中。"
 
 echo ""
 echo "============================================"

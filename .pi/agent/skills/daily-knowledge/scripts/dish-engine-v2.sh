@@ -58,7 +58,9 @@ query_dish() {
       echo ""
       sqlite3 -header -column "$DB_DISHES" "
         SELECT version_name as 做法, style as 口味, difficulty as 难度, 
-               time_minutes || '分钟' as 时间, servings || '人份' as 份量
+               time_minutes || '分钟' as 时间, servings || '人份' as 份量,
+               COALESCE(source_platform,'') as 来源平台,
+               COALESCE(source_url,'') as 来源网址
         FROM dish_versions WHERE dish_id=$dish_id;
       "
       echo ""
@@ -75,7 +77,8 @@ show_version() {
   
   # 版本信息
   sqlite3 "$DB_DISHES" "
-    SELECT d.name || ' - ' || v.version_name || '（' || v.style || '）'
+    SELECT d.name || ' - ' || v.version_name || '（' || v.style || '）',
+           COALESCE(v.source_platform,'') || ' ' || COALESCE(v.source_url,'') AS 来源
     FROM dishes d JOIN dish_versions v ON d.id=v.dish_id
     WHERE v.id=$vid;
   "
@@ -84,7 +87,9 @@ show_version() {
   # 基本信息
   sqlite3 -header -column "$DB_DISHES" "
     SELECT difficulty as 难度, time_minutes || '分钟' as 时间, 
-           servings || '人份' as 份量, description as 简介
+           servings || '人份' as 份量, description as 简介,
+           COALESCE(source_platform,'') as 来源平台,
+           COALESCE(source_url,'') as 来源网址
     FROM dish_versions WHERE id=$vid;
   "
   
@@ -102,7 +107,8 @@ show_version() {
     sqlite3 "$DB_DISHES" "
       SELECT '  ' || name || '：' || amount || unit || 
              CASE WHEN optional=1 THEN '（可选）' ELSE '' END ||
-             CASE WHEN substitute IS NOT NULL THEN ' [可替换：' || substitute || ']' ELSE '' END
+             CASE WHEN substitute IS NOT NULL THEN ' [可替换：' || substitute || ']' ELSE '' END ||
+             CASE WHEN source_url IS NOT NULL THEN ' [来源：' || source_url || ']' ELSE '' END
       FROM dish_ingredients 
       WHERE version_id=$vid AND category='$cat'
       ORDER BY id;
@@ -115,7 +121,8 @@ show_version() {
   echo "【食材科学】"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   sqlite3 "$DB_DISHES" "
-    SELECT '【' || name || '】' || science
+    SELECT '【' || name || '】' || science ||
+           CASE WHEN source_url IS NOT NULL THEN '（来源:' || source_url || '）' ELSE '' END
     FROM dish_ingredients 
     WHERE version_id=$vid AND science IS NOT NULL
     ORDER BY id;
@@ -132,7 +139,8 @@ show_version() {
     SELECT step_order || '|' || phase || '|' || action || '|' || description || '|' || 
            COALESCE(duration,'-') || '|' || COALESCE(temperature,'-') || '|' || 
            COALESCE(visual,'-') || '|' || COALESCE(science,'-') || '|' || 
-           COALESCE(tips,'-') || '|' || COALESCE(common_mistakes,'-')
+           COALESCE(tips,'-') || '|' || COALESCE(common_mistakes,'-') || '|' ||
+           COALESCE(source_url,'-')
     FROM dish_steps 
     WHERE version_id=$vid
     ORDER BY step_order;
@@ -199,7 +207,9 @@ show_version() {
 # 列出所有菜品
 list_dishes() {
   sqlite3 -header -column "$DB_DISHES" "
-    SELECT name as 菜品, description as 简介
+    SELECT name as 菜品, description as 简介,
+           COALESCE(source_platform,'') as 来源平台,
+           COALESCE(source_url,'') as 来源网址
     FROM dishes ORDER BY name;
   "
 }
@@ -209,7 +219,9 @@ list_versions() {
   local dish_id=$1
   sqlite3 -header -column "$DB_DISHES" "
     SELECT version_name as 做法, style as 口味, difficulty as 难度, 
-           time_minutes || '分钟' as 时间, description as 简介
+           time_minutes || '分钟' as 时间, description as 简介,
+           COALESCE(source_platform,'') as 来源平台,
+           COALESCE(source_url,'') as 来源网址
     FROM dish_versions WHERE dish_id=$dish_id;
   "
 }

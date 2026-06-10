@@ -76,8 +76,16 @@ add_method() {
   read tips
   echo "健康提示: "
   read health_note
+  echo "来源平台: "
+  read source_platform
+  echo "来源标题: "
+  read source_title
+  echo "来源网址: "
+  read source_url
+  echo "采集方式: "
+  read source_method
   
-  sqlite3 "$DB_PATH" "INSERT INTO cooking_methods (name, name_en, principle, temperature, pros, cons, suitable_for, tips, health_note) VALUES ('$name', '$name_en', '$principle', '$temperature', '$pros', '$cons', '$suitable_for', '$tips', '$health_note');"
+  sqlite3 "$DB_PATH" "INSERT INTO cooking_methods (name, name_en, principle, temperature, pros, cons, suitable_for, tips, health_note, source_platform, source_title, source_url, source_method, source_precision) VALUES ('$name', '$name_en', '$principle', '$temperature', '$pros', '$cons', '$suitable_for', '$tips', '$health_note', '$source_platform', '$source_title', '$source_url', '$source_method', 'page-level');"
   echo "添加成功！"
 }
 
@@ -93,8 +101,16 @@ add_faq() {
   read answer
   echo "来源: "
   read source
+  echo "来源平台: "
+  read source_platform
+  echo "来源标题: "
+  read source_title
+  echo "来源网址: "
+  read source_url
+  echo "采集方式: "
+  read source_method
   
-  sqlite3 "$DB_PATH" "INSERT INTO cooking_faq (category, question, answer, source) VALUES ('$category', '$question', '$answer', '$source');"
+  sqlite3 "$DB_PATH" "INSERT INTO cooking_faq (category, question, answer, source, source_platform, source_title, source_url, source_method, source_precision) VALUES ('$category', '$question', '$answer', '$source', '$source_platform', '$source_title', '$source_url', '$source_method', 'page-level');"
   echo "添加成功！"
 }
 
@@ -121,6 +137,7 @@ show_help() {
   echo "  add-method - 添加烹饪方式"
   echo "  add-faq    - 添加常见问题"
   echo "  export     - 导出数据为SQL"
+  echo "  register-source - 登记来源元数据"
   echo ""
   echo "示例:"
   echo "  ./manage-cooking-db.sh init"
@@ -130,6 +147,7 @@ show_help() {
   echo "  ./manage-cooking-db.sh add-method"
   echo "  ./manage-cooking-db.sh add-faq"
   echo "  ./manage-cooking-db.sh export"
+  echo "  ./manage-cooking-db.sh register-source"
   echo "========================================="
 }
 
@@ -155,6 +173,9 @@ case $COMMAND in
     ;;
   "export")
     export_sql
+    ;;
+  "register-source")
+    echo "请使用 scripts/source-register.sh 统一登记来源"
     ;;
   *)
     show_help

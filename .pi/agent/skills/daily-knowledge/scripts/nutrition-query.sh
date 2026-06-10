@@ -26,7 +26,9 @@ query_nutrition() {
     sqlite3 -header -column "$DB_NUTRITION" "
       SELECT name as 食材, category as 分类, calories as 热量, 
              protein as 蛋白质, fat as 脂肪, carbs as 碳水,
-             fiber as 膳食纤维
+             fiber as 膳食纤维,
+             COALESCE(source_platform,'') as 来源平台,
+             COALESCE(source_url,'') as 来源网址
       FROM ingredient_nutrition ORDER BY category, name;
     "
   else
@@ -34,7 +36,11 @@ query_nutrition() {
     echo "【$KEYWORD 营养成分】"
     sqlite3 -header -column "$DB_NUTRITION" "
       SELECT name, calories, protein, fat, carbs, fiber, water,
-             vitamin_c, vitamin_a, calcium, iron, zinc, selenium
+             vitamin_c, vitamin_a, calcium, iron, zinc, selenium,
+             COALESCE(source_platform,'') as 来源平台,
+             COALESCE(source_title,'') as 来源标题,
+             COALESCE(source_url,'') as 来源网址,
+             COALESCE(source_method,'') as 采集方式
       FROM ingredient_nutrition WHERE name LIKE '%$KEYWORD%';
     "
     
@@ -100,7 +106,9 @@ query_reaction() {
   if [ -z "$KEYWORD" ]; then
     sqlite3 -header -column "$DB_NUTRITION" "
       SELECT name as 反应, name_en as 英文名, category as 分类,
-             temperature_min || '-' || temperature_max || '°C' as 温度范围
+             temperature_min || '-' || temperature_max || '°C' as 温度范围,
+             COALESCE(source_platform,'') as 来源平台,
+             COALESCE(source_url,'') as 来源网址
       FROM chemical_reactions;
     "
   else
@@ -134,7 +142,8 @@ query_interaction() {
   if [ -z "$KEYWORD" ]; then
     sqlite3 -header -column "$DB_NUTRITION" "
       SELECT nutrient1 as 营养素1, nutrient2 as 营养素2, 
-             interaction_type as 类型, health_impact as 健康影响
+             interaction_type as 类型, health_impact as 健康影响,
+             COALESCE(ref_source,'') as 参考来源
       FROM nutrient_interactions;
     "
   else
@@ -199,7 +208,9 @@ query_synergy() {
   if [ -z "$KEYWORD" ]; then
     sqlite3 -header -column "$DB_NUTRITION" "
       SELECT food1 as 食材1, food2 as 食材2, 
-             effect_type as 效应类型, health_benefit as 健康益处
+             effect_type as 效应类型, health_benefit as 健康益处,
+             COALESCE(source_platform,'') as 来源平台,
+             COALESCE(source_url,'') as 来源网址
       FROM food_synergy;
     "
   else

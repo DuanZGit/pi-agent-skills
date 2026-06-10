@@ -5,6 +5,12 @@
 TYPE=${1:-"general"}
 KEYWORD=${2:-""}
 
+if [ "$TYPE" = "/dk" ]; then
+  shift
+  TYPE=${1:-"food"}
+  KEYWORD=${2:-""}
+fi
+
 # 权威信息源
 SOURCES='
 【权威信息源】
@@ -20,74 +26,87 @@ SOURCES='
 
 # 回答模板
 case $TYPE in
-  "health"|"健康")
-    echo "【健康知识回答模板】"
+  "/dk")
+    TYPE=${1:-"food"}
+    KEYWORD=${2:-""}
+    ;;
+  "health"|"健康"|"food"|"食物"|"recipe"|"菜品"|"做法")
+    # 食材/菜品问题必须带量化营养、机理和引用源
+    echo "已触发daily knowledge技能"
     echo ""
-    echo "【一句话结论】"
-    echo "[直接回答，不废话]"
+    echo "【正文】"
+    echo "[先给直接可执行的结论]"
     echo ""
-    echo "【通俗解释】"
-    echo "[用比喻说明，就像......]"
+    echo "【量化营养】"
+    echo "- 蛋白质：xxx g/100g"
+    echo "- 脂肪：xxx g/100g"
+    echo "- 碳水：xxx g/100g"
+    echo "- 热量：xxx kcal/100g"
+    echo "- 必要时补充：维生素、矿物质、GI"
     echo ""
-    echo "【实用建议】"
-    echo "1. [可执行的具体做法]"
-    echo "2. [可执行的具体做法]"
+    echo "【机理】"
+    echo "- 美拉德反应 / 焦糖化 / 蛋白质变性 / 淀粉糊化 / 氧化 / 脂溶与水溶迁移"
     echo ""
-    echo "【权威来源】"
-    echo "信息来源：国家卫健委/中国营养学会（年份）"
+    echo "【引用源】"
+    echo "1. [本地raw或数据库路径]"
+    echo "2. [权威网站或文献链接]"
     echo ""
-    echo "【温馨提示】"
-    echo "以上为一般性知识，如有身体不适请及时就医"
+    echo "【不确定项】"
+    echo "- 暂无可靠数据的部分要明确标注"
     ;;
     
   "life"|"生活")
-    echo "【生活技巧回答模板】"
+    echo "已触发daily knowledge技能"
     echo ""
-    echo "【结论】"
-    echo "[最有效的方法是......]"
+    echo "【正文】"
+    echo "[先给直接可执行的结论]"
     echo ""
-    echo "【原理解释】"
-    echo "[为什么这样做有效，用比喻]"
+    echo "【原理】"
+    echo "[为什么这样做有效]"
     echo ""
-    echo "【具体步骤】"
+    echo "【步骤】"
     echo "1. [第一步]"
     echo "2. [第二步]"
     echo "3. [第三步]"
     echo ""
-    echo "【替代方案】"
-    echo "[如果没有XX材料，还可以......]"
+    echo "【引用源】"
+    echo "1. [来源]"
+    echo "2. [来源]"
     ;;
     
   "science"|"科学")
-    echo "【科学原理回答模板】"
+    echo "已触发daily knowledge技能"
     echo ""
-    echo "【一句话解释】"
-    echo "[直接说明原理]"
+    echo "【正文】"
+    echo "[一句话结论]"
     echo ""
-    echo "【通俗比喻】"
-    echo "[用生活中的例子类比]"
+    echo "【原理】"
+    echo "[底层机制]"
     echo ""
-    echo "【延伸知识】"
-    echo "[相关的有趣事实]"
+    echo "【引用源】"
+    echo "1. [来源]"
+    echo "2. [来源]"
     ;;
     
   *)
-    echo "【通用回答模板】"
+    echo "已触发daily knowledge技能"
     echo ""
-    echo "【结论】"
+    echo "【正文】"
     echo "[直接回答问题]"
     echo ""
-    echo "【解释】"
-    echo "[为什么是这样]"
-    echo ""
-    echo "【建议】"
-    echo "[具体该怎么做]"
+    echo "【引用源】"
+    echo "1. [来源]"
     ;;
 esac
 
 echo ""
 echo "-----------------------------------"
 echo "$SOURCES"
+echo ""
+echo "【来源规则】"
+echo "- 优先输出页级原始网页"
+echo "- 只能到站点级时，明确标注 site-level"
+echo "- 不要把首页/站点级链接冒充成具体条目页"
 
 if [ -n "$KEYWORD" ]; then
   echo ""
