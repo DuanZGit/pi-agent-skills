@@ -8,6 +8,11 @@ license: MIT
 
 **Schema 驱动，安全可靠，覆盖所有可配置系统。**
 
+**默认工作方式：先查 schema，再读配置，再修改配置。**
+- 任何配置任务都先做 schema 发现
+- 修改前必须验证字段、类型、默认值和约束
+- 不确定 schema 时，先查询/推断，禁止直接改配置
+
 ---
 
 ## 一、功能概述
@@ -88,6 +93,16 @@ license: MIT
 
 ## 三、核心流程
 
+### 0. Schema 优先原则（强制）
+
+**所有配置任务都遵循：Schema 发现 → Schema 验证 → 配置查询 → 配置修改 → 配置验证。**
+
+在动手前必须先确认：
+- 目标配置项是否存在
+- 类型是否正确
+- 是否有枚举/范围/必填约束
+- 是否有默认值或继承关系
+
 ### 1. Schema 发现（自动）
 
 **自动发现可配置系统的 Schema：**
@@ -139,6 +154,8 @@ docker config inspect <config>
 
 ### 4. 配置修改
 
+**修改前先确认 schema。不要直接凭经验写配置。**
+
 ```bash
 # OpenClaw 配置
 openclaw config set <path> <value>
@@ -155,6 +172,8 @@ docker config create <name> <file>
 
 ### 5. 配置验证
 
+**每次修改后都要回读/校验，确认 schema 约束仍满足。**
+
 ```bash
 # OpenClaw 配置
 openclaw config validate
@@ -169,7 +188,54 @@ nginx -t
 docker config inspect <config>
 ```
 
-### 6. 配置备份与恢复
+### 6. 常见 Schema 查询清单
+
+**先查 schema 的快速入口：**
+
+```bash
+# OpenClaw / Pi 配置
+openclaw config schema
+openclaw config schema agents.defaults.model
+openclaw config schema channels.feishu.footer
+
+# JSON / YAML / TOML 配置
+jq '.<path>' config.json
+python3 - <<'PY'
+import json; print(json.load(open('config.json')))
+PY
+
+# Nginx
+nginx -T
+nginx -t
+
+# systemd
+systemctl cat <service>
+systemctl show <service>
+
+# sysctl
+sysctl -a | grep <parameter>
+sysctl <parameter>
+
+# Docker / Compose
+docker inspect <container>
+docker config inspect <config>
+docker compose config
+
+# Kubernetes
+kubectl explain <resource>
+kubectl get <resource> -o yaml
+
+# Databases
+mysql --help
+psql --help
+redis-cli --help
+
+# Cloud / IaC
+aws <service> help
+terraform providers schema -json
+```
+
+### 7. 配置备份与恢复
 
 ```bash
 # OpenClaw 配置

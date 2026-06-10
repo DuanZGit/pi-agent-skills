@@ -1,18 +1,11 @@
 # Pi Agent 配置
 
-## 模型配置
+## 行为准则
 
-已配置以下模型的 Agent 文件：
+- **语言**：默认中文，思考过程也用中文
+- **Wiki 写入**：等用户说"存"才用 `wiki_retro`
 
-| 模型 | 配置文件 |
-|------|---------|
-| MiniMax-M3 | `agents/minimax-m3.md` |
-| MiniMax-M2.7 | `agents/minimax-m27.md` |
-
-## 配置说明
-
-- 配置文件位于 `agents/` 目录
-- 详细规则见各 Agent 配置文件
+---
 
 ## Context Mode
 
