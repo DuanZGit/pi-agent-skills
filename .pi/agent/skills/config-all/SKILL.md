@@ -1,17 +1,12 @@
 ---
 name: config-all
-description: "统一配置管理技能 — Schema 驱动，安全可靠，覆盖所有可配置系统。触发词：配置、设置、修改、schema、validate、config、model、provider、channel、plugin、agent、secret、gateway、memory、security、sysctl、ulimit、nginx、mysql、docker、k8s、aws。"
+description: "Use when user asks about configuration, settings, OpenClaw, agent, model, provider, channel, plugin, gateway, memory, security, or any system/service configuration. Triggers on: config, 配置, 设置, 修改, schema, validate, openclaw, agent, model, provider, channel, plugin, gateway, memory, security, sysctl, ulimit, nginx, mysql, docker, k8s, aws, 重启, restart, 查看配置, 修改配置."
 license: MIT
 ---
 
 # Config All — 统一配置管理技能
 
 **Schema 驱动，安全可靠，覆盖所有可配置系统。**
-
-**默认工作方式：先查 schema，再读配置，再修改配置。**
-- 任何配置任务都先做 schema 发现
-- 修改前必须验证字段、类型、默认值和约束
-- 不确定 schema 时，先查询/推断，禁止直接改配置
 
 ---
 
@@ -76,32 +71,29 @@ license: MIT
 - "XXX 怎么配置"
 - "配置所有 XXX"
 - "Schema XXX"
+- "重启 XXX"
+- "启动 XXX"
+- "停止 XXX"
+- "查看状态"
+- "检查配置"
+- "验证配置"
 
 ### 隐式意图
-- ✅ **OpenClaw**："换成 openai"、"开飞书"、"装插件"
-- ✅ **系统**："优化内核"、"修改 ulimit"、"配置防火墙"
-- ✅ **网络**："配置 IP"、"设置 DNS"、"修改路由"
-- ✅ **服务**："配置 Nginx"、"设置 MySQL"、"优化 Redis"
-- ✅ **容器**："配置 Docker"、"设置 K8s"
+- ✅ **OpenClaw**："换成 openai"、"开飞书"、"装插件"、"重启网关"、"查看日志"、"切换模型"、"配置渠道"、"添加插件"
+- ✅ **系统**："优化内核"、"修改 ulimit"、"配置防火墙"、"重启服务"、"查看系统状态"
+- ✅ **网络**："配置 IP"、"设置 DNS"、"修改路由"、"重启网络"
+- ✅ **服务**："配置 Nginx"、"设置 MySQL"、"优化 Redis"、"重启 Nginx"、"重启 MySQL"
+- ✅ **容器**："配置 Docker"、"设置 K8s"、"重启容器"
 - ✅ **云服务**："配置 AWS"、"设置 CDN"
-- ✅ **错误**：配置验证错误、Schema 错误、启动失败
+- ✅ **错误**：配置验证错误、Schema 错误、启动失败、服务异常
+- ✅ **查看**：查看配置、检查状态、查看日志、查看进程
 
 ### 关键词
-`config`、`配置`、`设置`、`schema`、`validate`、`model`、`provider`、`channel`、`plugin`、`agent`、`secret`、`gateway`、`memory`、`security`、`sysctl`、`ulimit`、`nginx`、`mysql`、`docker`、`k8s`、`aws`
+`config`、`配置`、`设置`、`schema`、`validate`、`model`、`provider`、`channel`、`plugin`、`agent`、`secret`、`gateway`、`memory`、`security`、`sysctl`、`ulimit`、`nginx`、`mysql`、`docker`、`k8s`、`aws`、`重启`、`restart`、`启动`、`start`、`停止`、`stop`、`状态`、`status`、`日志`、`log`、`检查`、`check`、`验证`、`verify`
 
 ---
 
 ## 三、核心流程
-
-### 0. Schema 优先原则（强制）
-
-**所有配置任务都遵循：Schema 发现 → Schema 验证 → 配置查询 → 配置修改 → 配置验证。**
-
-在动手前必须先确认：
-- 目标配置项是否存在
-- 类型是否正确
-- 是否有枚举/范围/必填约束
-- 是否有默认值或继承关系
 
 ### 1. Schema 发现（自动）
 
@@ -154,8 +146,6 @@ docker config inspect <config>
 
 ### 4. 配置修改
 
-**修改前先确认 schema。不要直接凭经验写配置。**
-
 ```bash
 # OpenClaw 配置
 openclaw config set <path> <value>
@@ -172,8 +162,6 @@ docker config create <name> <file>
 
 ### 5. 配置验证
 
-**每次修改后都要回读/校验，确认 schema 约束仍满足。**
-
 ```bash
 # OpenClaw 配置
 openclaw config validate
@@ -188,54 +176,7 @@ nginx -t
 docker config inspect <config>
 ```
 
-### 6. 常见 Schema 查询清单
-
-**先查 schema 的快速入口：**
-
-```bash
-# OpenClaw / Pi 配置
-openclaw config schema
-openclaw config schema agents.defaults.model
-openclaw config schema channels.feishu.footer
-
-# JSON / YAML / TOML 配置
-jq '.<path>' config.json
-python3 - <<'PY'
-import json; print(json.load(open('config.json')))
-PY
-
-# Nginx
-nginx -T
-nginx -t
-
-# systemd
-systemctl cat <service>
-systemctl show <service>
-
-# sysctl
-sysctl -a | grep <parameter>
-sysctl <parameter>
-
-# Docker / Compose
-docker inspect <container>
-docker config inspect <config>
-docker compose config
-
-# Kubernetes
-kubectl explain <resource>
-kubectl get <resource> -o yaml
-
-# Databases
-mysql --help
-psql --help
-redis-cli --help
-
-# Cloud / IaC
-aws <service> help
-terraform providers schema -json
-```
-
-### 7. 配置备份与恢复
+### 6. 配置备份与恢复
 
 ```bash
 # OpenClaw 配置
